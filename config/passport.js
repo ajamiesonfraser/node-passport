@@ -59,6 +59,17 @@ module.exports = function(passport) {
 
                     // if the user is found, then log them in
                     if (user) {
+                        if (!user.facebook.token) {
+                            user.facebook.token = token;
+                            user.facebook.name  = profile.name.givenName + ' ' + profile.name.familyName;
+                            user.facebook.email = profile.emails[0].value;
+
+                            user.save(function(err) {
+                                if (err)
+                                    throw err;
+                                return done(null, user);
+                            });
+                        }
                         return done(null, user); // user found, return that user
                     } else {
                         // if there is no user found with that facebook id, create them
@@ -123,6 +134,17 @@ module.exports = function(passport) {
 
                         // if the user is found then log them in
                         if (user) {
+                            if (!user.twitter.token) {
+                                user.twitter.token = token;
+                                user.twitter.username = profile.username;
+                                user.twitter.displayName = profile.displayName;
+
+                                user.save(function(err) {
+                                    if (err)
+                                        throw err;
+                                    return done(null, user);
+                                });
+                            }
                             return done(null, user); // user found, return that user
                         } else {
                             // if there is no user, create them
@@ -184,7 +206,17 @@ module.exports = function(passport) {
                             return done(err);
 
                         if (user) {
+                            if (!user.google.token) {
+                                user.google.token = token;
+                                user.google.name = profile.displayName;
+                                user.google.email = profile.emails[0].value;
 
+                                user.save(function (err) {
+                                    if (err)
+                                        throw err;
+                                    return done(null, user);
+                                });
+                            }
                             // if a user is found, log them in
                             return done(null, user);
                         } else {
